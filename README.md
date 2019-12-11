@@ -11,8 +11,8 @@ You will need cmake 2.8+ and a recent C++ compiler (C++11 support is required). 
   * Clone this repository (git clone git@github.com:scussatb/ACTI-Model.git)
   * In the ACTI-Model directory, create a directory "build"
   * In this new directory, run 
-    cmake ..
-    make
+    * cmake ..
+    * make
 
 # Run the model
 To run the model, in the build directory:
