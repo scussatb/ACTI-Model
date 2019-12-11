@@ -17,9 +17,6 @@ bool Scenario::hourlyReports = true;
 bool Scenario::finalReport = false;
 bool Scenario::perCapitaKilling = false;
 
-int Scenario::reinjectAfter = 100000;
-
-
 //MecacellViewer::Viewer<Scenario> Scenario::viewer;
 
 Scenario::Scenario(int nTumorCells) {
@@ -103,7 +100,6 @@ void Scenario::init(int argc, char **argv) {
 
 void Scenario::loop() {
 	// update tumor center of mass
-	int ntc = 0;
 	w.update();
 	if (nDeadTumorCells > 0) {
 		currentHour = (w.getNbUpdates()-delay) * w.getDt() * MinutesPerTick / 60;

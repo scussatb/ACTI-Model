@@ -4,13 +4,11 @@
 #include <limits>
 
 
-TumorCell::TumorCellType TumorCell::cellType = D10; //JY;//D10;
+TumorCell::TumorCellType TumorCell::cellType = D10;
 std::normal_distribution<double> TumorCell::cycleDurationNormDist(TumorCell::cellType==D10?1200:1065, 60); // cycles in 20h/17.75h +- 1h
 double TumorCell::G1SRatio = TumorCell::cellType==D10?0.70:0.77;
-std::normal_distribution<double> TumorCell::scanDurationNormDist(2, 1); // scans in 2 minutes
-std::normal_distribution<double> TumorCell::repairLevelNormDist(0., 0.); // per minute
-double TumorCell::inhibitoryStrength = 87.5;
-std::uniform_real_distribution<double> TumorCell::inhibitingDist(0, 1);
+double TumorCell::inhibitoryRadius = 87.5;
+std::uniform_real_distribution<double> TumorCell::inhibitingDistribution(0, 1);
 
 
 TumorCell::TumorCell(MecaCell::Vec v):	
@@ -20,24 +18,9 @@ TumorCell::TumorCell(MecaCell::Vec v):
 
 void TumorCell::init() {
 	lifeLevel = 1.0;
-	repairLevel = 0.0;
-	scanDuration = scanDurationNormDist(MecaCell::globalRand);
 	resetCycle();
 	type = Tumor;
-	if (cellType == D10) {
-		std::uniform_real_distribution<double> sensDist(0.0, 1.0);
-		double sensitiv = sensDist(MecaCell::globalRand);
-		if (sensitiv < 1.0) {
-			sensitivity = Sensitive;
-		} else if (sensitiv < 0.21+0.27) {
-			sensitivity = Persistant;
-		} else {
-			sensitivity = Resistant;
-		}
-	} else {
-		sensitivity = Sensitive;
-	}
-	color[0] = (sensitivity==Sensitive)?0.0:0.0;
+	color[0] = 0.0;
 	color[1] = 0.0;
 	color[2] = 0.0;
 }
@@ -46,12 +29,9 @@ void TumorCell::init() {
 void TumorCell::init(TumorCell *c) {
 	scenario = c->scenario;
 	w = c->w;
-	scanDuration = c->scanDuration;
-	repairLevel = std::max(0.0, repairLevelNormDist(MecaCell::globalRand));
 	lifeLevel = c->lifeLevel;
 	resetCycle();
 	type = Tumor;
-	sensitivity = c->sensitivity;
 }	
 
 TumorCell::~TumorCell() {
@@ -75,7 +55,6 @@ VCell *TumorCell::updateBehavior(double dt) {
 		return nullptr;
 	}
 	
-	lifeLevel = std::min(1.0, lifeLevel + repairLevel * Scenario::MinutesPerTick * dt);
 	switch (state) {
 		case cycling:
 			return isCycling(dt);
@@ -121,12 +100,10 @@ VCell* TumorCell::isCycling(double dt) {
 	}
 
 	// contact with CTL
-	if (sensitivity == Sensitive || sensitivity == Persistant) {
-		for (auto *c : getConnectedCells()) {
-			if (c->type == CTL) {
-				state = contactWithCTL;
-				return nullptr;
-			}
+	for (auto *c : getConnectedCells()) {
+		if (c->type == CTL) {
+			state = contactWithCTL;
+			return nullptr;
 		}
 	}
 
@@ -146,7 +123,7 @@ VCell* TumorCell::isInContactWithCTL(double dt) {
 			// is attacked
 			if (lifeLevel > 0) {
 				if (ctl->inhibitorySignal<=0.01) {
-					lifeLevel -= dt * Scenario::MinutesPerTick * (sensitivity==Persistant)?ctl->hitStrength/10.0:ctl->hitStrength;
+					lifeLevel -= dt * Scenario::MinutesPerTick * ctl->hitStrength;
 					color[0] = 0.7;
 					color[1] = 0.0;
 					color[2] = 0.0;
@@ -156,8 +133,8 @@ VCell* TumorCell::isInContactWithCTL(double dt) {
 								double dist = 	std::sqrt((cs->getPosition().x - position.x) * (cs->getPosition().x - position.x) +
 							     		(cs->getPosition().y - position.y) * (cs->getPosition().y - position.y) +
 								(cs->getPosition().z - position.z) * (cs->getPosition().z - position.z));
-								if (dist<inhibitoryStrength) {
-									if (inhibitingDist(MecaCell::globalRand) < CTLCell::inhibitoryRecoverySpeed) {
+								if (dist<inhibitoryRadius) {
+									if (inhibitingDistribution(MecaCell::globalRand) < CTLCell::inhibitoryProbability) {
 										cs->inhibitorySignal = 1.0; 
 										scenario->nInhibitedCells++;
 									}	
@@ -171,7 +148,6 @@ VCell* TumorCell::isInContactWithCTL(double dt) {
 				scenario->tumorCells.erase(std::remove(scenario->tumorCells.begin(), scenario->tumorCells.end(), this), scenario->tumorCells.end());
 				die();
 				ctl->nbKilledCell++;
-				ctl->attractingCounter = 1.0;
 				break;
 			}
 		}

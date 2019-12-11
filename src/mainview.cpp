@@ -8,19 +8,15 @@
 //#include <QtGui>
 
 int main(int argc, char **argv) {
-	CTLCell::attractionRadius = stod(argv[1]);
-	CTLCell::attractingReduceSpeed = 1.0 / stod(argv[2]);
-	Scenario::ctlTumorRatio = stod(argv[3]);
-	CTLCell::hitStrengthNormDist = std::normal_distribution<double>(1.0/stod(argv[4]), stod(argv[5]));
-	TumorCell::repairLevelNormDist = std::normal_distribution<double>(stod(argv[6]), stod(argv[7]));
-	TumorCell::inhibitoryStrength = stod(argv[8]);
-	CTLCell::inhibitoryRecoverySpeed = stod(argv[9]);
-	Scenario::simuDurationHour = stoi(argv[10]);
-	TumorCell::cellType = std::strcmp(argv[11],"JY")==0?TumorCell::JY:TumorCell::D10;
+	Scenario::ctlTumorRatio = stod(argv[1]);
+	CTLCell::hitStrength = 1.0 / stod(argv[2]);
+	TumorCell::inhibitoryRadius = stod(argv[3]);
+	CTLCell::inhibitoryProbability = stod(argv[4]);
+	Scenario::simuDurationHour = stoi(argv[5]);
+	TumorCell::cellType = std::strcmp(argv[6],"JY")==0?TumorCell::JY:TumorCell::D10;
 	TumorCell::cycleDurationNormDist=std::normal_distribution<double>(TumorCell::cellType==TumorCell::D10?1200:1065, 60);
-	Scenario::reinjectAfter = stoi(argv[12]);
 
-	if (argc==13) {
+	if (argc==7) {
 		// console mode
 		Scenario s(1000);
 		s.init(argc, argv);

@@ -33,8 +33,6 @@ public:
 	static bool finalReport;
 	static bool perCapitaKilling;
 	
-	static int reinjectAfter;
-
 	int currentHour;
 	int oldHour;
 	int delay;

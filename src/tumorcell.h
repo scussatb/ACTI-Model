@@ -26,11 +26,6 @@ public:
 		JY,
 		D10
 	};
-	enum TumorSensitivityType {
-		Sensitive,
-		Persistant,
-		Resistant
-	};
 
 	TumorState state;	
 	static TumorCellType cellType;
@@ -38,24 +33,16 @@ public:
 	// Cycle variables
 	double cycleDuration;
 	double g1sDuration;
-       	double g2mDuration;	
+    double g2mDuration;	
 	static std::normal_distribution<double> cycleDurationNormDist;
 	static double G1SRatio;
 	double age;
 	TumorCyclePhase cyclePhase;   
 
-	// scanned state variables
-	double scanDuration;
-	static std::normal_distribution<double> scanDurationNormDist;
-
 	// defending state variables
 	double lifeLevel;
-	double hitStrength;
-	double repairLevel;
-	static std::normal_distribution<double> repairLevelNormDist;
-	static double inhibitoryStrength;
-	static std::uniform_real_distribution<double> inhibitingDist;
-	TumorSensitivityType sensitivity;
+	static double inhibitoryRadius;
+	static std::uniform_real_distribution<double> inhibitingDistribution;
 
 	TumorCell(MecaCell::Vec v);	
 
@@ -66,7 +53,7 @@ public:
 	VCell *updateBehavior(double dt); 
 
 	VCell* isCycling(double dt);
-       	VCell* isInContactWithCTL(double dt);
+   	VCell* isInContactWithCTL(double dt);
 	void resetCycle();
 	void init();
 	void init(TumorCell* c);
