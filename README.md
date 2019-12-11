@@ -3,6 +3,8 @@ The ACTI Model (Agent-based Ctl-Tumor Interaction Model)
 
 The ACTI Model is an agent-based model that simulates interaction between Cytotoxic T-Lymphocytes and tumor cells. It is callibrated on melanoma cells and conventionnal target cells in collaboration with Pr. Salvatore Valitutti (CRCT - INSERM) and the results of the study it has been used is published in [Nature Scientific Reports](https://www.nature.com/articles/s41598-019-48711-2). If you use this model, please cite the paper :)
 
+![screenshot](https://github.com/scussatb/ACTI-Model/blob/master/screenshot.png)
+
 # Installation
 ## MecaCell
 The ACTI Model is based on the open-source simulation platform MecaCell developed in our research group. It is available on [github](https://github.com/jdisset/MecaCell). Please follow the installation instruction of the master branch before proceed.
