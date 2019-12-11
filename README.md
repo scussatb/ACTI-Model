@@ -19,8 +19,6 @@ You will need cmake 2.8+ and a recent C++ compiler (C++11 support is required). 
 # Run the model
 To run the model, in the build directory:
   * ./src/mecaBase ctlTumorRatio killDur inhRad inhProb simDur tumTyp
-
-where
     * ctlTumorRatio is the ratio ctl/tumor in the experiment
     * killDur is the duration of 1 kill for a CTL
     * inhRad is the inhibition radius when a tumor cell is killed
